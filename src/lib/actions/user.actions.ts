@@ -9,20 +9,10 @@ export async function createUser(user: CreateUserParams) {
   try {
     await dbConnect();
 
-    const checkAlreadyRegisterd = await User.findOne({username: user.username, email: user.email})
-
-    if (checkAlreadyRegisterd) {
-        throw new Error("User already registerd with email or username");
-    }
-    
     const newUser = await User.create(user);
 
     if (!newUser) {
         throw new Error("User not register");
-    }
-
-    if (newUser.username == "ahtish_develope") {
-        
     }
 
     return JSON.parse(JSON.stringify(newUser));
