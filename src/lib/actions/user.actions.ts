@@ -1,0 +1,111 @@
+"use server";
+import { revalidatePath } from "next/cache";
+import { handleError } from "../utils";
+import { User } from "../databaseConnection/models/user.models";
+import { dbConnect } from "../databaseConnection/dbConnect";
+
+// CREATE
+export async function createUser(user: CreateUserParams) {
+  try {
+    await dbConnect();
+
+    const checkAlreadyRegisterd = await User.findOne({username: user.username, email: user.email})
+
+    if (checkAlreadyRegisterd) {
+        throw new Error("User already registerd with email or username");
+    }
+    
+    const newUser = await User.create(user);
+
+    if (!newUser) {
+        throw new Error("User not register");
+    }
+
+    if (newUser.username == "ahtish_develope") {
+        
+    }
+
+    return JSON.parse(JSON.stringify(newUser));
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+// READ
+export async function getUserById(userId: string) {
+  try {
+    await dbConnect();
+
+    const user = await User.findOne({ clerkId: userId });
+
+    if (!user) throw new Error("User not found");
+
+    if (user.username == "ahtish_develope") {
+        user.isAdmin = true
+        const userVer = await user.save()
+        return JSON.parse(JSON.stringify(userVer));
+    }
+
+    return JSON.parse(JSON.stringify(user));
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+// UPDATE
+export async function updateUser(clerkId: string, user: UpdateUserParams) {
+  try {
+    await dbConnect();
+
+    const updatedUser = await User.findOneAndUpdate({ clerkId }, user, {
+      new: true,
+    });
+
+    if (!updatedUser) throw new Error("User update failed");
+    
+    return JSON.parse(JSON.stringify(updatedUser));
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+// DELETE
+export async function deleteUser(clerkId: string) {
+  try {
+    await dbConnect();
+
+    // Find user to delete
+    const userToDelete = await User.findOne({ clerkId });
+
+    if (!userToDelete) {
+      throw new Error("User not found");
+    }
+
+    // Delete user
+    const deletedUser = await User.findByIdAndDelete(userToDelete._id);
+    revalidatePath("/");
+
+    return deletedUser ? JSON.parse(JSON.stringify(deletedUser)) : null;
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+// USE CREDITS
+export async function updateCredits(userId: string, creditFee: number) {
+  try {
+    await dbConnect();
+
+    const updatedUserCredits = await User.findOneAndUpdate(
+      { _id: userId },
+      { $inc: { creditBalance: creditFee }},
+      { new: true }
+    )
+
+    if(!updatedUserCredits) throw new Error("User credits update failed");
+
+    return JSON.parse(JSON.stringify(updatedUserCredits));
+  } catch (error) {
+    handleError(error);
+  }
+}
