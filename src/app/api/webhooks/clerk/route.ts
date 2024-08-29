@@ -70,18 +70,27 @@ export async function POST(req: Request) {
       isAdmin: username == "ahtish_develope"? true : false
     };
 
-    const newUser = await createUser(user);
+    try {
+      const newUser = await createUser(user);
 
-    // Set public metadata
-    if (newUser) {
-      await clerkClient.users.updateUserMetadata(id, {
-        publicMetadata: {
-          userId: newUser._id,
-        },
-      });
+      if (newUser) {
+        await clerkClient.users.updateUserMetadata(id, {
+          publicMetadata: {
+            userId: newUser._id,
+          },
+        });
+      }
+
+      return NextResponse.json({ message: "OK", user: newUser });
+    } catch (error) {
+      console.error("Error creating user:", error);
+      return new Response("Error creating user", { status: 500 });
     }
 
-    return NextResponse.json({ message: "OK", user: newUser });
+    // Set public metadata
+   
+
+   
   }
 
   // UPDATE
