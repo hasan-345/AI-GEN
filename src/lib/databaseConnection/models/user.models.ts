@@ -1,6 +1,19 @@
 import mongoose, { Model, Schema, Document, models, model } from "mongoose";
 
-const userSchema = new Schema({
+interface UserTypes extends Document{
+    clerkId: string; // String type, required and unique
+    isAdmin: boolean; // Boolean type, defaults to false
+    email: string; // String type, required
+    username: string; // String type, required and unique
+    photo: string; // String type, required
+    lastName: string; // String type, required
+    firstName: string; // String type, required
+    planId?: number; // Number type, defaults to 1
+    creditBalance?: number; // Number type, defaults to 10
+}
+
+
+const userSchema: Schema<UserTypes> = new Schema({
     clerkId: {
         type: String,
         required: true,
@@ -44,4 +57,4 @@ const userSchema = new Schema({
 
 })
 
-export const User = models?.users || model("users",userSchema)
+export const User = models?.users as Model<UserTypes> || model<UserTypes>("users",userSchema)
