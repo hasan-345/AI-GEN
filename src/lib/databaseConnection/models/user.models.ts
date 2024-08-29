@@ -21,7 +21,7 @@ const userSchema = new Schema({
         unique: true
     },
     photo: {
-        type: URL,
+        type: String,
         required: true
     },
     lastName: {
