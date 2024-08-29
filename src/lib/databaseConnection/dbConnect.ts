@@ -1,6 +1,6 @@
 import mongoose from "mongoose"
 
-interface Connection {
+type Connection = {
     isConnected?: number
 }
 
@@ -13,12 +13,13 @@ export async function dbConnect(): Promise<void> {
     }
 
     try {
-        let db = await mongoose.connect(process.env.MONGODB_URL!,{
-            dbName: "AI-GEN"
-        })
+        let db = await mongoose.connect(process.env.MONGODB_URL!)
         connection.isConnected = db.connections[0].readyState
+
+        console.log("Mongodb is connected successfully");
+        
     } catch (error) {
         console.log("MONGODB IS FAILED TO CONNECT",error);
-        process.exit()
+        process.exit(1)
     }
 }

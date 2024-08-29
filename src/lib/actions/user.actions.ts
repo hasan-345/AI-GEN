@@ -11,10 +11,6 @@ export async function createUser(user: CreateUserParams) {
 
     const newUser = await User.create(user);
 
-    if (!newUser) {
-        throw new Error("User not register");
-    }
-
     return JSON.parse(JSON.stringify(newUser));
   } catch (error) {
     handleError(error);
@@ -29,12 +25,6 @@ export async function getUserById(userId: string) {
     const user = await User.findOne({ clerkId: userId });
 
     if (!user) throw new Error("User not found");
-
-    if (user.username == "ahtish_develope") {
-        user.isAdmin = true
-        const userVer = await user.save()
-        return JSON.parse(JSON.stringify(userVer));
-    }
 
     return JSON.parse(JSON.stringify(user));
   } catch (error) {
