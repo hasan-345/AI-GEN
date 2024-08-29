@@ -7,12 +7,16 @@ import { dbConnect } from "../databaseConnection/dbConnect";
 // CREATE
 export async function createUser(user: CreateUserParams) {
   try {
+    console.log("Connecting to MongoDB...");
     await dbConnect();
 
+    console.log("Creating a new user with data:", user);
     const newUser = await User.create(user);
 
+    console.log("User created successfully:", newUser);
     return JSON.parse(JSON.stringify(newUser));
   } catch (error) {
+    console.error("Error in creating user:", error);
     handleError(error);
   }
 }
